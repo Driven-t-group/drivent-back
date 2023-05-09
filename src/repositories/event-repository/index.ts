@@ -5,7 +5,7 @@ async function findFirst() {
 }
 
 const eventRepository = {
-  findFirst,
+  findFirst
 };
 
 export default eventRepository;
