@@ -87,24 +87,39 @@ describe('GET /activity/dates', () => {
   });
 });
 
-// describe('GET /activity/dates/:dateId', () => {
-//   it('should respond with status 200 and array of activities for the date', async () => {
+describe('GET /activity/dates/:dateId', () => {
+  it('should respond with status 200 and array of activities for the date', async () => {
+    const user = await factory.createUser();
+    const token = await generateValidToken(user);
+    const enrollment = await factory.createEnrollmentWithAddress(user);
+    const ticketType = await factory.createTicketTypeWithHotel();
+    const ticket = await factory.createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+    const payment = await factory.createPayment(ticket.id, ticketType.price);
 
-//     const response = await server.get('/activity/dates/{DATE_HERE}');
+    const activity = await factory.createActivity();
 
-//     expect(response.status).toBe(httpStatus.OK);
-//     expect(response.body).toEqual([
-//       {
-//         //to implement
-//       },
-//     ]);
-//   });
-// });
+    const activityDate = activity.startsAt.toISOString().split('T')[0];
 
-// describe('POST /activity/subscribe/:activityId', () => {
-//   it('should respond with status 200', async () => {
-//     const response = await server.post('/activity/subscribe/${activity.id}');
+    const response = await server.get('/activity/dates/' + activityDate).set('Authorization', `Bearer ${token}`);
 
-//     expect(response.status).toBe(httpStatus.OK);
-//   });
-// });
+    expect(response.status).toBe(httpStatus.OK);
+    expect(response.body).toEqual(expect.any(Array));
+  });
+});
+
+describe('POST /activity/subscribe/:activityId', () => {
+  it('should respond with status 200', async () => {
+    const user = await factory.createUser();
+    const token = await generateValidToken(user);
+    const enrollment = await factory.createEnrollmentWithAddress(user);
+    const ticketType = await factory.createTicketTypeWithHotel();
+    const ticket = await factory.createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+    const payment = await factory.createPayment(ticket.id, ticketType.price);
+
+    const activity = await factory.createActivity();
+
+    const response = await server.post('/activity/subscribe/' + activity.id).set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(httpStatus.OK);
+  });
+});
