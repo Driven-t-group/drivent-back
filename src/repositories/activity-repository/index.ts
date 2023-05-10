@@ -1,3 +1,4 @@
+import { Activity } from '@prisma/client';
 import { prisma } from '@/config';
 
 export async function findDates() {
@@ -8,7 +9,7 @@ export async function findDates() {
   });
 }
 
-export async function findByDate(minDate: Date, maxDate: Date) {
+export async function findByDate(minDate: string, maxDate: string) {
   return prisma.activity.findMany({
     where: {
       startsAt: {
@@ -24,11 +25,37 @@ export async function findByDate(minDate: Date, maxDate: Date) {
   });
 }
 
+export async function findActivityById(id: number) {
+  return prisma.activity.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      _count: {
+        select: { Subscription: true },
+      },
+    },
+  });
+}
+
 export async function subscribe(activityId: number, userId: number) {
   return prisma.subscription.create({
     data: {
       activityId,
       userId,
+    },
+  });
+}
+
+export async function findTicketByUserId(userId: number) {
+  return prisma.ticket.findFirst({
+    where: {
+      Enrollment: {
+        userId,
+      },
+    },
+    include: {
+      TicketType: true,
     },
   });
 }

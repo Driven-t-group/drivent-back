@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { getDefaultEvent } from '@/controllers';
 import { authenticateToken, validateBody } from '@/middlewares';
+import * as activityController from '@/controllers/activity-controller';
 
 const activityRouter = Router();
 
 activityRouter
-  .get('/dates', authenticateToken, () => 0)
-  .get('/dates/:dateId', authenticateToken, () => 0)
-  .post('/subscribe/:eventId', authenticateToken, () => 0);
+  .get('/dates', authenticateToken, activityController.getDates)
+  .get('/dates/:dateId', authenticateToken, activityController.getAtcivityByDate)
+  .post('/subscribe/:eventId', authenticateToken, activityController.subscribe);
 export { activityRouter };
