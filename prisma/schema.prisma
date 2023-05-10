@@ -146,9 +146,16 @@ model Activity {
   capacity     Int
   startsAt     DateTime
   endsAt       DateTime
+  location     Location
   Subscription Subscription[]
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+}
+
+enum Location {
+  Principal
+  Lateral
+  Workshop
 }
 
 model Subscription {

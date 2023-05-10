@@ -1,16 +1,17 @@
 import { TicketStatus } from '@prisma/client';
-import * as error from '@/errors';
+import httpStatus from 'http-status';
 import * as activityRepository from '@/repositories/activity-repository';
 
 export async function getDates(userId: number) {
   const ticket = await activityRepository.findTicketByUserId(userId);
-  if (!ticket) throw error.paymentRequiredError();
-  if (ticket.status !== TicketStatus.PAID) throw error.paymentRequiredError();
-  if (ticket.TicketType.isRemote) throw error.forBiddenError();
+  if (!ticket) throw { status: httpStatus.PAYMENT_REQUIRED, message: 'Payment required' };
+  if (ticket.status !== TicketStatus.PAID) throw { status: httpStatus.PAYMENT_REQUIRED, message: 'Payment required' };
+  if (ticket.TicketType.isRemote) throw { status: httpStatus.FORBIDDEN, message: 'Forbidden' };
 
   const response = await activityRepository.findDates();
-  if (!response) throw error.notFoundError();
-  return;
+  if (response.length === 0) throw { status: 404, message: 'No activities for this event yet.' };
+  const datesArray = response.map((activity) => activity.startsAt.toISOString().split('T')[0]);
+  return [...new Set(datesArray)];
 }
 
 export async function getAtcivityByDate(date: string, userId: number) {
@@ -21,24 +22,26 @@ export async function getAtcivityByDate(date: string, userId: number) {
 
   const response = await activityRepository.findByDate(minDate, maxDate);
 
-  if (!response) throw error.notFoundError();
+  if (!response) throw { status: 404, message: 'No activities for this date yet.' };
+  // if (response.length === 0) throw { status: 404, message: 'No activities for this date yet.' };
 
   return response;
 }
 
 export async function subscribe(activityId: number, userId: number) {
   const ticket = await activityRepository.findTicketByUserId(userId);
-  if (!ticket) throw error.paymentRequiredError();
-  if (ticket.status !== TicketStatus.PAID) throw error.paymentRequiredError();
-  if (ticket.TicketType.isRemote) throw error.forBiddenError();
+  if (!ticket) throw { status: httpStatus.PAYMENT_REQUIRED, message: 'Payment required' };
+  if (ticket.status !== TicketStatus.PAID) throw { status: httpStatus.PAYMENT_REQUIRED, message: 'Payment required' };
+  if (ticket.TicketType.isRemote) throw { status: httpStatus.FORBIDDEN, message: 'Forbidden' };
 
   const activity = await activityRepository.findActivityById(activityId);
-  if (!activity) throw error.notFoundError();
-  if (activity._count.Subscription >= activity.capacity) throw error.conflictError('Capacity is full');
+  if (!activity) throw { status: httpStatus.NOT_FOUND, message: 'Activity not found' };
+  if (activity._count.Subscription >= activity.capacity)
+    throw { status: httpStatus.CONFLICT, message: 'Capacity reached' };
 
   const response = await activityRepository.subscribe(activityId, userId);
 
-  if (!response) throw error.notFoundError();
+  if (!response) throw { status: 500, message: 'Error subscribing to activity' };
 
   return response;
 }

@@ -7,15 +7,16 @@ import app, { init } from '@/app';
 
 beforeAll(async () => {
   await init();
+});
+
+beforeEach(async () => {
   await cleanDb();
 });
 
 const server = supertest(app);
 
-describe('GET /event/dates', () => {
+describe('GET /activity/dates', () => {
   it('should respond with status 200 and dates', async () => {
-    const event = await factory.createEvent();
-
     const user = await factory.createUser();
     const token = await generateValidToken(user);
     const enrollment = await factory.createEnrollmentWithAddress(user);
@@ -23,38 +24,87 @@ describe('GET /event/dates', () => {
     const ticket = await factory.createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
     const payment = await factory.createPayment(ticket.id, ticketType.price);
 
-    const response = await server.get('/event/dates');
+    const activities = await factory.createActivities();
+
+    const response = await server.get('/activity/dates').set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(httpStatus.OK);
-    expect(response.body).toEqual([
-      {
-        //to implement
-      },
-    ]);
+    expect(response.body).toEqual(['2023-05-10', '2023-05-11']);
+  });
+
+  it('should respond with status 404 when there are no activities', async () => {
+    const user = await factory.createUser();
+    const token = await generateValidToken(user);
+    const enrollment = await factory.createEnrollmentWithAddress(user);
+    const ticketType = await factory.createTicketTypeWithHotel();
+    const ticket = await factory.createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+    const payment = await factory.createPayment(ticket.id, ticketType.price);
+
+    const response = await server.get('/activity/dates').set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(httpStatus.NOT_FOUND);
+  });
+
+  it('should respond with status 402 when user does not have a ticket', async () => {
+    const user = await factory.createUser();
+    const token = await generateValidToken(user);
+    const enrollment = await factory.createEnrollmentWithAddress(user);
+
+    const activities = await factory.createActivities();
+
+    const response = await server.get('/activity/dates').set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(httpStatus.PAYMENT_REQUIRED);
+  });
+
+  it('should respond with status 402 when user has a ticket but it is not paid', async () => {
+    const user = await factory.createUser();
+    const token = await generateValidToken(user);
+    const enrollment = await factory.createEnrollmentWithAddress(user);
+    const ticketType = await factory.createTicketTypeWithHotel();
+    const ticket = await factory.createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
+
+    const activities = await factory.createActivities();
+
+    const response = await server.get('/activity/dates').set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(httpStatus.PAYMENT_REQUIRED);
+  });
+
+  it('should respond with status 403 when user has a ticket but it is remote', async () => {
+    const user = await factory.createUser();
+    const token = await generateValidToken(user);
+    const enrollment = await factory.createEnrollmentWithAddress(user);
+    const ticketType = await factory.createTicketTypeRemote();
+    const ticket = await factory.createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+    const payment = await factory.createPayment(ticket.id, ticketType.price);
+
+    const activities = await factory.createActivities();
+
+    const response = await server.get('/activity/dates').set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(httpStatus.FORBIDDEN);
   });
 });
 
-describe('GET /event/dates/:dateId', () => {
-  it('should respond with status 200 and array of events for the date', async () => {
-    const event = await factory.createEvent();
+// describe('GET /activity/dates/:dateId', () => {
+//   it('should respond with status 200 and array of activities for the date', async () => {
 
-    const response = await server.get('/event/dates/{DATE_HERE}');
+//     const response = await server.get('/activity/dates/{DATE_HERE}');
 
-    expect(response.status).toBe(httpStatus.OK);
-    expect(response.body).toEqual([
-      {
-        //to implement
-      },
-    ]);
-  });
-});
+//     expect(response.status).toBe(httpStatus.OK);
+//     expect(response.body).toEqual([
+//       {
+//         //to implement
+//       },
+//     ]);
+//   });
+// });
 
-describe('POST /event/subscribe/:eventId', () => {
-  it('should respond with status 200', async () => {
-    const event = await factory.createEvent();
+// describe('POST /activity/subscribe/:activityId', () => {
+//   it('should respond with status 200', async () => {
+//     const response = await server.post('/activity/subscribe/${activity.id}');
 
-    const response = await server.post('/event/subscribe/${event.id}');
-
-    expect(response.status).toBe(httpStatus.OK);
-  });
-});
+//     expect(response.status).toBe(httpStatus.OK);
+//   });
+// });

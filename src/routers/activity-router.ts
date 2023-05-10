@@ -8,5 +8,5 @@ const activityRouter = Router();
 activityRouter
   .get('/dates', authenticateToken, activityController.getDates)
   .get('/dates/:date', authenticateToken, activityController.getAtcivityByDate)
-  .post('/subscribe/:eventId', authenticateToken, activityController.subscribe);
+  .post('/subscribe/:activityId', authenticateToken, activityController.subscribe);
 export { activityRouter };

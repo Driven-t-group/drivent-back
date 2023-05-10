@@ -27,8 +27,8 @@ export async function getAtcivityByDate(req: AuthenticatedRequest, res: Response
 export async function subscribe(req: AuthenticatedRequest, res: Response) {
   try {
     const { userId } = req;
-    const { eventId } = req.params;
-    const response = await activityService.subscribe(Number(eventId), userId);
+    const { activityId } = req.params;
+    const response = await activityService.subscribe(Number(activityId), userId);
     return res.status(httpStatus.OK).send(response);
   } catch (error) {
     return res.status(error.status || 500).send(error.message);
