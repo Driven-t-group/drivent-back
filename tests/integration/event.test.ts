@@ -1,7 +1,8 @@
 import httpStatus from 'http-status';
 import supertest from 'supertest';
+import { TicketStatus } from '@prisma/client';
 import { createEvent } from '../factories';
-import { cleanDb } from '../helpers';
+import { cleanDb, generateValidToken } from '../helpers';
 import app, { init } from '@/app';
 
 beforeAll(async () => {

@@ -1,7 +1,7 @@
 import { Event } from '@prisma/client';
 import dayjs from 'dayjs';
 import { notFoundError } from '@/errors';
-import eventRepository from '@/repositories/event-repository';
+import * as eventRepository from '@/repositories/event-repository';
 import { exclude } from '@/utils/prisma-utils';
 
 async function getFirstEvent(): Promise<GetFirstEventResult> {
