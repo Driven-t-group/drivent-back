@@ -1,8 +1,8 @@
-import { ApplicationError } from '@/protocols';
+import { AcceptedName, ApplicationError } from '@/protocols';
 
 export function conflictError(message: string): ApplicationError {
   return {
-    name: 'ConflictError',
+    name: AcceptedName.ConflictError,
     message,
   };
 }

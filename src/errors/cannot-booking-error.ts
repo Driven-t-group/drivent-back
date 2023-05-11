@@ -1,8 +1,8 @@
-import { ApplicationError } from '@/protocols';
+import { AcceptedName, ApplicationError } from '@/protocols';
 
 export function cannotBookingError(): ApplicationError {
   return {
-    name: 'CannotBookingError',
+    name: AcceptedName.CannotBookingError,
     message: 'Cannot booking this room! Overcapacity!',
   };
 }
