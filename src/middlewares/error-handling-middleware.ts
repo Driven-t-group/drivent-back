@@ -2,68 +2,74 @@ import { NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import { ApplicationError } from '@/protocols';
 
+const acceptedErrors = {
+  CannotEnrollBeforeStartDateError(err: ApplicationError, res: Response) {
+    return res.status(httpStatus.BAD_REQUEST).send({
+      message: err.message,
+    });
+  },
+  ConflictError(err: ApplicationError, res: Response) {
+    return res.status(httpStatus.CONFLICT).send({
+      message: err.message,
+    });
+  },
+  DuplicatedEmailError(err: ApplicationError, res: Response) {
+    return res.status(httpStatus.CONFLICT).send({
+      message: err.message,
+    });
+  },
+  InvalidCredentialsError(err: ApplicationError, res: Response) {
+    return res.status(httpStatus.UNAUTHORIZED).send({
+      message: err.message,
+    });
+  },
+  UnauthorizedError(err: ApplicationError, res: Response) {
+    return res.status(httpStatus.UNAUTHORIZED).send({
+      message: err.message,
+    });
+  },
+  NotFoundError(err: ApplicationError, res: Response) {
+    return res.status(httpStatus.NOT_FOUND).send({
+      message: err.message,
+    });
+  },
+  CannotListHotelsError(err: ApplicationError, res: Response) {
+    return res.status(httpStatus.NOT_FOUND).send({
+      message: err.message,
+    });
+  },
+  BadRequestError(err: ApplicationError, res: Response) {
+    return res.status(httpStatus.BAD_REQUEST).send({
+      message: err.message,
+    });
+  },
+  ForBiddenError(err: ApplicationError, res: Response) {
+    return res.status(httpStatus.FORBIDDEN).send({
+      message: err.message,
+    });
+  },
+  CannotBookingError(err: ApplicationError, res: Response) {
+    return res.status(httpStatus.FORBIDDEN).send({
+      message: err.message,
+    });
+  },
+  InternalServerError(_err: ApplicationError, res: Response) {
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
+      error: 'InternalServerError',
+      message: 'Internal Server Error',
+    });
+  }
+}
+
 export function handleApplicationErrors(
-  err: ApplicationError | Error,
+  err: ApplicationError,
   _req: Request,
   res: Response,
   _next: NextFunction,
 ) {
-  if (err.name === 'CannotEnrollBeforeStartDateError') {
-    return res.status(httpStatus.BAD_REQUEST).send({
-      message: err.message,
-    });
+  try {
+    acceptedErrors[err.name](err, res)
+  } catch (error) {
+    acceptedErrors['InternalServerError'](err, res)
   }
-
-  if (err.name === 'ConflictError' || err.name === 'DuplicatedEmailError') {
-    return res.status(httpStatus.CONFLICT).send({
-      message: err.message,
-    });
-  }
-
-  if (err.name === 'InvalidCredentialsError') {
-    return res.status(httpStatus.UNAUTHORIZED).send({
-      message: err.message,
-    });
-  }
-
-  if (err.name === 'UnauthorizedError') {
-    return res.status(httpStatus.UNAUTHORIZED).send({
-      message: err.message,
-    });
-  }
-
-  if (err.name === 'NotFoundError') {
-    return res.status(httpStatus.NOT_FOUND).send({
-      message: err.message,
-    });
-  }
-
-  if (err.name === 'CannotListHotelsError') {
-    return res.status(httpStatus.NOT_FOUND).send({
-      message: err.message,
-    });
-  }
-
-  if (err.name === 'BadRequestError') {
-    return res.status(httpStatus.BAD_REQUEST).send({
-      message: err.message,
-    });
-  }
-
-  if (err.name === 'ForBiddenError') {
-    return res.status(httpStatus.FORBIDDEN).send({
-      message: err.message,
-    });
-  }
-
-  if (err.name === 'CannotBookingError') {
-    return res.status(httpStatus.FORBIDDEN).send({
-      message: err.message,
-    });
-  }
-
-  res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
-    error: 'InternalServerError',
-    message: 'Internal Server Error',
-  });
 }
