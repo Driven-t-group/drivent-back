@@ -1,7 +1,22 @@
 import { Payment, Ticket } from '@prisma/client';
 
+
+enum AcceptedName {
+  CannotEnrollBeforeStartDateError = "CannotEnrollBeforeStartDateError",
+  ConflictError = "ConflictError",
+  DuplicatedEmailError = "DuplicatedEmailError",
+  InvalidCredentialsError = "InvalidCredentialsError",
+  UnauthorizedError = "UnauthorizedError",
+  NotFoundError = "NotFoundError",
+  CannotListHotelsError = "CannotListHotelsError",
+  BadRequestError = "BadRequestError",
+  ForBiddenError = "ForBiddenError",
+  CannotBookingError = "CannotBookingError",
+  InternalServerError = "InternalServerError"
+}
+
 export type ApplicationError = {
-  name: string;
+  name: AcceptedName;
   message: string;
 };
 
