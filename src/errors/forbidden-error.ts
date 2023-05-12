@@ -1,8 +1,9 @@
 import { ApplicationError } from '@/protocols';
+import { AcceptedName } from '@/protocols';
 
 export function forBiddenError(): ApplicationError {
   return {
-    name: 'ForBiddenError',
+    name: AcceptedName.ForBiddenError,
     message: 'Forbidden Error!',
   };
 }

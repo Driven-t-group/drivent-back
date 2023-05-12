@@ -53,11 +53,22 @@ const acceptedErrors = {
       message: err.message,
     });
   },
+  PaymentRequiredError(err: ApplicationError, res: Response){
+    return res.status(httpStatus.PAYMENT_REQUIRED).send({
+      message: err.message 
+    })
+  },
   InternalServerError(_err: ApplicationError, res: Response) {
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
       error: 'InternalServerError',
       message: 'Internal Server Error',
     });
+  },
+  InvalidDataError(err: ApplicationError, res: Response){
+
+  },
+  InvalidEmailError(err: ApplicationError, res: Response){
+    
   }
 }
 

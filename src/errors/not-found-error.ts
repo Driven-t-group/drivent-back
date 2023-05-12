@@ -1,8 +1,8 @@
-import { ApplicationError } from '@/protocols';
+import { AcceptedName, ApplicationError } from '@/protocols';
 
 export function notFoundError(): ApplicationError {
   return {
-    name: 'NotFoundError',
+    name: AcceptedName.NotFoundError,
     message: 'No result for this search!',
   };
 }

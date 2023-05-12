@@ -1,7 +1,7 @@
 import { Payment, Ticket } from '@prisma/client';
 
 
-enum AcceptedName {
+export enum AcceptedName {
   CannotEnrollBeforeStartDateError = "CannotEnrollBeforeStartDateError",
   ConflictError = "ConflictError",
   DuplicatedEmailError = "DuplicatedEmailError",
@@ -12,7 +12,10 @@ enum AcceptedName {
   BadRequestError = "BadRequestError",
   ForBiddenError = "ForBiddenError",
   CannotBookingError = "CannotBookingError",
-  InternalServerError = "InternalServerError"
+  InternalServerError = "InternalServerError",
+  PaymentRequiredError = "PaymentRequiredError",
+  InvalidDataError = "InvalidDataError",
+  InvalidEmailError = "InvalidEmailError",
 }
 
 export type ApplicationError = {
