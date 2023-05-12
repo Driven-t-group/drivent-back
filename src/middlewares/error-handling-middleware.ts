@@ -53,10 +53,10 @@ const acceptedErrors = {
       message: err.message,
     });
   },
-  PaymentRequiredError(err: ApplicationError, res: Response){
+  PaymentRequiredError(err: ApplicationError, res: Response) {
     return res.status(httpStatus.PAYMENT_REQUIRED).send({
-      message: err.message 
-    })
+      message: err.message,
+    });
   },
   InternalServerError(_err: ApplicationError, res: Response) {
     return res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
@@ -64,23 +64,22 @@ const acceptedErrors = {
       message: 'Internal Server Error',
     });
   },
-  InvalidDataError(err: ApplicationError, res: Response){
-
+  InvalidDataError(err: ApplicationError, res: Response) {
+    return res.status(httpStatus.BAD_REQUEST).send({
+      message: 'Invalid data',
+    });
   },
-  InvalidEmailError(err: ApplicationError, res: Response){
-    
-  }
-}
+  InvalidEmailError(err: ApplicationError, res: Response) {
+    return res.status(httpStatus.UNPROCESSABLE_ENTITY).send({
+      message: 'Invalid email',
+    });
+  },
+};
 
-export function handleApplicationErrors(
-  err: ApplicationError,
-  _req: Request,
-  res: Response,
-  _next: NextFunction,
-) {
+export function handleApplicationErrors(err: ApplicationError, _req: Request, res: Response, _next: NextFunction) {
   try {
-    acceptedErrors[err.name](err, res)
+    acceptedErrors[err.name](err, res);
   } catch (error) {
-    acceptedErrors['InternalServerError'](err, res)
+    acceptedErrors['InternalServerError'](err, res);
   }
 }

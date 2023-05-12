@@ -47,6 +47,15 @@ export async function subscribe(activityId: number, userId: number) {
   });
 }
 
+export async function verifySubscription(activityId: number, userId: number) {
+  return prisma.subscription.findFirst({
+    where: {
+      activityId,
+      userId,
+    },
+  });
+}
+
 export async function findTicketByUserId(userId: number) {
   return prisma.ticket.findFirst({
     where: {
@@ -56,6 +65,17 @@ export async function findTicketByUserId(userId: number) {
     },
     include: {
       TicketType: true,
+    },
+  });
+}
+
+export async function findUserSubscriptions(userId: number) {
+  return prisma.subscription.findMany({
+    where: {
+      userId,
+    },
+    select: {
+      activityId: true,
     },
   });
 }
