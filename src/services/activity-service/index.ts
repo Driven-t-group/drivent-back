@@ -23,9 +23,19 @@ export async function getAtcivityByDate(date: string, userId: number) {
   const response = await activityRepository.findByDate(minDate, maxDate);
 
   if (!response) throw { status: 404, message: 'No activities for this date yet.' };
+
+  const subscriptions = await activityRepository.findUserSubscriptions(userId);
+  const subscribedActivities = subscriptions.map((subscription) => subscription.activityId);
+
+  const responseWithSubscriptions: object[] = response.map((activity) => {
+    if (subscribedActivities.includes(activity.id)) {
+      return { ...activity, subscribed: true };
+    }
+    return { ...activity, subscribed: false };
+  });
   // if (response.length === 0) throw { status: 404, message: 'No activities for this date yet.' };
 
-  return response;
+  return responseWithSubscriptions;
 }
 
 export async function subscribe(activityId: number, userId: number) {
@@ -38,6 +48,9 @@ export async function subscribe(activityId: number, userId: number) {
   if (!activity) throw { status: httpStatus.NOT_FOUND, message: 'Activity not found' };
   if (activity._count.Subscription >= activity.capacity)
     throw { status: httpStatus.CONFLICT, message: 'Capacity reached' };
+
+  const verifySubscription = await activityRepository.verifySubscription(activityId, userId);
+  if (verifySubscription) throw { status: httpStatus.CONFLICT, message: 'Already subscribed' };
 
   const response = await activityRepository.subscribe(activityId, userId);
 
