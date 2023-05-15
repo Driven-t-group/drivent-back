@@ -1,5 +1,5 @@
 import { Ticket, TicketStatus, TicketType } from '@prisma/client';
-import { notFoundError } from '@/errors';
+import { conflictError, notFoundError } from '@/errors';
 import enrollmentRepository from '@/repositories/enrollment-repository';
 import ticketsRepository from '@/repositories/tickets-repository';
 import { CreateTicketParams } from '@/protocols';
@@ -31,11 +31,14 @@ async function createTicket(userId: number, ticketTypeId: number): Promise<Ticke
     status: TicketStatus.RESERVED,
   };
 
-  await ticketsRepository.createTicket(ticketData);
-
   const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
+  if(ticket){
+    throw conflictError('ticket already exists');
+  }
 
-  return ticket;
+  const ticketResponse = await ticketsRepository.createTicket(ticketData);
+
+  return ticketResponse;
 }
 
 const ticketService = { getTicketType, getTicketByUserId, createTicket };
