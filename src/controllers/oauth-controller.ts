@@ -6,7 +6,7 @@ export async function signupOrLogin(req: Request, res: Response) {
   try {
     const { code } = req.query;
     const response = await createUserOrSession(String(code));
-    res.sendStatus(200);
+    res.status(httpStatus.OK).send(response);
   } catch (error) {
     console.log(error.message);
     return res.sendStatus(httpStatus.INTERNAL_SERVER_ERROR);

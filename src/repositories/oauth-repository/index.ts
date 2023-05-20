@@ -7,7 +7,3 @@ export async function upsertUser(oauth_id: number) {
     update: { oauth_id },
   });
 }
-
-export async function createSession(userId: number) {
-  return 0;
-}

@@ -1,21 +1,20 @@
 import { Payment, Ticket } from '@prisma/client';
 
-
 export enum AcceptedName {
-  CannotEnrollBeforeStartDateError = "CannotEnrollBeforeStartDateError",
-  ConflictError = "ConflictError",
-  DuplicatedEmailError = "DuplicatedEmailError",
-  InvalidCredentialsError = "InvalidCredentialsError",
-  UnauthorizedError = "UnauthorizedError",
-  NotFoundError = "NotFoundError",
-  CannotListHotelsError = "CannotListHotelsError",
-  BadRequestError = "BadRequestError",
-  ForBiddenError = "ForBiddenError",
-  CannotBookingError = "CannotBookingError",
-  InternalServerError = "InternalServerError",
-  PaymentRequiredError = "PaymentRequiredError",
-  InvalidDataError = "InvalidDataError",
-  InvalidEmailError = "InvalidEmailError",
+  CannotEnrollBeforeStartDateError = 'CannotEnrollBeforeStartDateError',
+  ConflictError = 'ConflictError',
+  DuplicatedEmailError = 'DuplicatedEmailError',
+  InvalidCredentialsError = 'InvalidCredentialsError',
+  UnauthorizedError = 'UnauthorizedError',
+  NotFoundError = 'NotFoundError',
+  CannotListHotelsError = 'CannotListHotelsError',
+  BadRequestError = 'BadRequestError',
+  ForBiddenError = 'ForBiddenError',
+  CannotBookingError = 'CannotBookingError',
+  InternalServerError = 'InternalServerError',
+  PaymentRequiredError = 'PaymentRequiredError',
+  InvalidDataError = 'InvalidDataError',
+  InvalidEmailError = 'InvalidEmailError',
 }
 
 export type ApplicationError = {

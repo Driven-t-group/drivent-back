@@ -1,7 +1,10 @@
 import express from 'express';
 import axios from 'axios';
-
-import { upsertUser, createSession } from '@/repositories/oauth-repository';
+import jwt from 'jsonwebtoken';
+import { Session } from '@prisma/client';
+import { exclude } from '@/utils/prisma-utils';
+import { upsertUser } from '@/repositories/oauth-repository';
+import sessionRepository from '@/repositories/session-repository';
 
 export async function createUserOrSession(code: string) {
   const { client_id, client_secret } = process.env;
@@ -24,4 +27,19 @@ export async function createUserOrSession(code: string) {
 
   const user = await upsertUser(oauthId);
   const session = await createSession(user.id);
+
+  return {
+    user: exclude(user, 'password'),
+    token: session,
+  };
+}
+
+async function createSession(userId: number): Promise<string> {
+  const token = jwt.sign({ userId }, process.env.JWT_SECRET);
+  await sessionRepository.create({
+    token,
+    userId,
+  });
+
+  return token;
 }
