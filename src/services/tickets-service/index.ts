@@ -32,7 +32,7 @@ async function createTicket(userId: number, ticketTypeId: number): Promise<Ticke
   };
 
   const ticket = await ticketsRepository.findTicketByEnrollmentId(enrollment.id);
-  if(ticket){
+  if (ticket) {
     throw conflictError('ticket already exists');
   }
 

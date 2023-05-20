@@ -32,8 +32,8 @@ async function findByUserId(userId: number) {
     include: {
       Room: {
         include: {
-          Hotel: true
-        }
+          Hotel: true,
+        },
       },
     },
   });

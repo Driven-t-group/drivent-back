@@ -1,5 +1,4 @@
-import { ApplicationError } from '@/protocols';
-import { AcceptedName } from '@/protocols';
+import { ApplicationError, AcceptedName } from '@/protocols';
 
 export function forBiddenError(): ApplicationError {
   return {
