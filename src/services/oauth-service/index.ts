@@ -11,6 +11,8 @@ export async function createUserOrSession(code: string) {
 
   const params = '?client_id=' + client_id + '&client_secret=' + client_secret + '&code=' + code;
 
+  console.log(client_id, client_secret);
+
   const token = await axios.get('https://github.com/login/oauth/access_token' + params, {
     headers: {
       Accept: 'application/json',

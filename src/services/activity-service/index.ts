@@ -11,7 +11,9 @@ export async function getDates(userId: number) {
   const response = await activityRepository.findDates();
   if (response.length === 0) throw { status: 404, message: 'No activities for this event yet.' };
   const datesArray = response.map((activity) => activity.startsAt.toISOString().split('T')[0]);
-  return [...new Set(datesArray)];
+
+  const result = [...new Set(datesArray)];
+  return result;
 }
 
 export async function getAtcivityByDate(date: string, userId: number) {
