@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import dayjs from 'dayjs';
 import httpStatus from 'http-status';
 import supertest from 'supertest';
-import { createEvent, createUser } from '../factories';
+import { createEvent, createUser, deleteEvents } from '../factories';
 import { cleanDb } from '../helpers';
 import { duplicatedEmailError } from '@/services/users-service';
 import { prisma } from '@/config';
@@ -10,6 +10,10 @@ import app, { init } from '@/app';
 
 beforeAll(async () => {
   await init();
+  await cleanDb();
+});
+
+beforeEach(async () => {
   await cleanDb();
 });
 
@@ -38,6 +42,8 @@ describe('POST /users', () => {
 
     it('should respond with status 400 when there is no event', async () => {
       const body = generateValidBody();
+
+      await deleteEvents();
 
       const response = await server.post('/users').send(body);
 

@@ -12,6 +12,9 @@ export function createBooking({ roomId, userId }: CreateBookingParams) {
       userId,
       roomId,
     },
+    include: {
+      Room: true,
+    },
   });
 }
 

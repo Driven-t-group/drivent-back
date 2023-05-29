@@ -41,3 +41,15 @@ export async function createActivity() {
     },
   });
 }
+
+export async function createActivityWithFullCapacity() {
+  return prisma.activity.create({
+    data: {
+      title: faker.lorem.words(3),
+      capacity: 0,
+      location: Location.Lateral,
+      startsAt: '2023-05-10T10:00:00.000Z',
+      endsAt: '2023-05-10T11:00:00.000Z',
+    },
+  });
+}
