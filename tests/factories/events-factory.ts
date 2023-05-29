@@ -14,3 +14,7 @@ export function createEvent(params: Partial<Event> = {}): Promise<Event> {
     },
   });
 }
+
+export function deleteEvents() {
+  return prisma.event.deleteMany({});
+}

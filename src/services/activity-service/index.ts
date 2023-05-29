@@ -24,7 +24,7 @@ export async function getAtcivityByDate(date: string, userId: number) {
 
   const response = await activityRepository.findByDate(minDate, maxDate);
 
-  if (!response) throw { status: 404, message: 'No activities for this date yet.' };
+  if (response.length === 0) throw { status: 404, message: 'No activities for this date yet.' };
 
   const subscriptions = await activityRepository.findUserSubscriptions(userId);
   const subscribedActivities = subscriptions.map((subscription) => subscription.activityId);
@@ -42,7 +42,7 @@ export async function getAtcivityByDate(date: string, userId: number) {
 
 export async function subscribe(activityId: number, userId: number) {
   const ticket = await activityRepository.findTicketByUserId(userId);
-  if (!ticket) throw { status: httpStatus.PAYMENT_REQUIRED, message: 'Payment required' };
+  if (!ticket) throw { status: httpStatus.NOT_FOUND, message: 'Ticket not found' };
   if (ticket.status !== TicketStatus.PAID) throw { status: httpStatus.PAYMENT_REQUIRED, message: 'Payment required' };
   if (ticket.TicketType.isRemote) throw { status: httpStatus.FORBIDDEN, message: 'Forbidden' };
 
